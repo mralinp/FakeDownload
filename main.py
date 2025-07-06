@@ -3,13 +3,36 @@ import time
 import requests
 import os
 import random
-from dotenv import load_dotenv
+import configparser
 
 
 
 
-# Load environment variables
-load_dotenv()
+def load_config():
+    """Load configuration from config.ini file"""
+    config = configparser.ConfigParser()
+    config_file = '/opt/fakedownloader/config.ini'
+    
+    # Default configuration
+    default_config = {
+        'DEFAULT': {
+            'download_url': 'http://your-server.com/file',
+            'destination': 'downloaded_file',
+            'chunk_size': '102400'
+        }
+    }
+    
+    # Try to load existing config file
+    if os.path.exists(config_file):
+        config.read(config_file)
+    else:
+        # Create default config
+        config.read_dict(default_config)
+        os.makedirs(os.path.dirname(config_file), exist_ok=True)
+        with open(config_file, 'w') as f:
+            config.write(f)
+    
+    return config
 
 def get_default_interface():
     """Get the default network interface automatically"""
@@ -35,16 +58,24 @@ def get_default_interface():
     except:
         return 'eth0'
 
-INTERFACE = os.getenv('INTERFACE', get_default_interface())  # Auto-detect network interface
-URL = os.getenv('DOWNLOAD_URL', 'http://192.168.1.100:8000/yourfile')  # Download URL
-DESTINATION = os.getenv('DESTINATION', 'downloaded_file')  # Temporary download name
-CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', '102400'))  # 100 KB default
+# Load configuration
+config = load_config()
+
+INTERFACE = get_default_interface()  # Auto-detect network interface
+URL = config.get('DEFAULT', 'download_url')  # Download URL
+DESTINATION = config.get('DEFAULT', 'destination')  # Temporary download name
+CHUNK_SIZE = int(config.get('DEFAULT', 'chunk_size'))  # Chunk size
 
 def get_io(interface):
     io = psutil.net_io_counters(pernic=True)[interface]
     return io.bytes_sent, io.bytes_recv
 
 def download_file():
+    # Remove any previously downloaded file
+    if os.path.exists(DESTINATION):
+        os.remove(DESTINATION)
+        print(f"[{time.ctime()}] Removed previous download: {DESTINATION}")
+    
     sent0, recv0 = get_io(INTERFACE)
     print(f"[{time.ctime()}] Starting download...")
 

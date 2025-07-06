@@ -10,6 +10,18 @@ echo "Installing system dependencies..."
 apt update --yes
 apt install python3 python3-pip python3-venv git --yes
 
+# Clone the project to /opt
+echo "Cloning FakeDownloader project..."
+INSTALL_DIR="/opt/fakedownloader"
+
+if [ ! -d "$INSTALL_DIR" ]; then
+    git clone https://github.com/mralinp/FakeDownload.git "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
+else
+    cd "$INSTALL_DIR"
+    git pull origin main
+fi
+
 # Get download URL from user
 echo ""
 read -p "Enter the download URL: " DOWNLOAD_URL
@@ -23,14 +35,13 @@ source venv/bin/activate
 echo "Installing Python packages..."
 pip install -r requirements.txt
 
-# Create .env file with user's URL
+# Create config.ini file with user's URL
 echo "Creating configuration file..."
-cat > .env << EOF
-# Download configuration
-DOWNLOAD_URL=${DOWNLOAD_URL}
-# INTERFACE will be auto-detected
-DESTINATION=downloaded_file
-CHUNK_SIZE=102400
+cat > config.ini << EOF
+[DEFAULT]
+download_url = ${DOWNLOAD_URL}
+destination = downloaded_file
+chunk_size = 102400
 EOF
 
 # Copy systemd service file

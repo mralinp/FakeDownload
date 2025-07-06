@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/FakeDownloader
-Environment=PATH=/root/FakeDownloader/venv/bin
-ExecStart=/root/FakeDownloader/venv/bin/python /root/FakeDownloader/main.py
+WorkingDirectory=/opt/fakedownloader
+Environment=PATH=/opt/fakedownloader/venv/bin
+ExecStart=/opt/fakedownloader/venv/bin/python /opt/fakedownloader/main.py
 Restart=always
 RestartSec=10
 

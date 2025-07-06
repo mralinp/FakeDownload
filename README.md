@@ -2,30 +2,28 @@
 
 A Linux systemd service that downloads a file every 30 minutes to simulate network activity.
 
-## Setup
+## Quick Install
+
+**Single command installation:**
+
+```bash
+curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownloader/main/install.sh | sudo bash
+```
+
+## Manual Setup
 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/FakeDownloader.git
+   git clone https://github.com/mralinp/FakeDownloader.git
    cd FakeDownloader
    ```
 
 2. **Run the setup script:**
-
    ```bash
-   chmod +x setup.sh
-   sudo ./setup.sh
+   chmod +x install.sh
+   sudo ./install.sh
    ```
-
-3. **Configure the download URL:**
-   Edit the `.env` file with your actual download URL:
-
-   ```bash
-   nano .env
-   ```
-
-   Update the `DOWNLOAD_URL` variable with your actual file URL.
 
 ## Configuration
 
