@@ -1,0 +1,15 @@
+[Unit]
+Description=FakeDownloader Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/FakeDownloader
+Environment=PATH=/root/FakeDownloader/venv/bin
+ExecStart=/root/FakeDownloader/venv/bin/python /root/FakeDownloader/main.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target 
