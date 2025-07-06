@@ -13,6 +13,8 @@ def load_config():
     config = configparser.ConfigParser()
     config_file = '/opt/fakedownloader/config.ini'
     
+    print(f"[{time.ctime()}] Loading config from: {config_file}")
+    
     # Default configuration
     default_config = {
         'DEFAULT': {
@@ -24,8 +26,21 @@ def load_config():
     
     # Try to load existing config file
     if os.path.exists(config_file):
+        print(f"[{time.ctime()}] Config file exists, reading...")
         config.read(config_file)
+        
+        # Debug: print what we read
+        try:
+            url = config.get('DEFAULT', 'download_url')
+            print(f"[{time.ctime()}] Read URL: '{url}'")
+            if not url or url.strip() == '':
+                print(f"[{time.ctime()}] ERROR: URL is empty!")
+                raise ValueError("URL is empty")
+        except Exception as e:
+            print(f"[{time.ctime()}] Error reading config: {e}")
+            raise
     else:
+        print(f"[{time.ctime()}] Config file not found, creating default...")
         # Create default config
         config.read_dict(default_config)
         os.makedirs(os.path.dirname(config_file), exist_ok=True)
