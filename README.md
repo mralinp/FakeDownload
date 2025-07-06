@@ -7,7 +7,7 @@ A Linux systemd service that downloads a file every 30 minutes to simulate netwo
 **Single command installation:**
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownloader/main/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownload/main/install.sh | sudo bash
 ```
 
 ## Manual Setup
@@ -27,12 +27,13 @@ curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownloader/main/install.
 
 ## Configuration
 
-The `.env` file contains the following settings:
+The `config.ini` file contains the following settings:
 
-- `DOWNLOAD_URL`: The URL of the file to download
-- `INTERFACE`: Network interface to monitor (default: eth0)
-- `DESTINATION`: Temporary filename for downloads (default: downloaded_file)
-- `CHUNK_SIZE`: Download chunk size in bytes (default: 102400)
+- `download_url`: The URL of the file to download
+- `destination`: Temporary filename for downloads (default: downloaded_file)
+- `chunk_size`: Download chunk size in bytes (default: 102400)
+
+**Note:** The network interface is automatically detected and doesn't need to be configured.
 
 ## Service Management
 
