@@ -59,7 +59,7 @@ fi
 # Update system and install dependencies
 echo "Installing system dependencies..."
 apt update --yes
-apt install python3 python3-pip python3-venv git curl --yes
+apt install python3 python3-pip python3-venv git curl wget --yes
 
 # Clone the project to /opt
 echo "Cloning FakeDownloader project..."

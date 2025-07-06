@@ -1,9 +1,9 @@
 import psutil
 import time
-import requests
 import os
 import random
 import configparser
+import subprocess
 
 
 
@@ -94,11 +94,27 @@ def download_file():
     sent0, recv0 = get_io(INTERFACE)
     print(f"[{time.ctime()}] Starting download...")
 
-    response = requests.get(URL, stream=True)
-    with open(DESTINATION, 'wb') as f:
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk:
-                f.write(chunk)
+    # Use wget to download the file
+    try:
+        result = subprocess.run([
+            'wget', 
+            '--quiet',  # Suppress output
+            '--output-document=' + DESTINATION,  # Save to destination file
+            URL
+        ], capture_output=True, text=True, timeout=300)  # 5 minute timeout
+        
+        if result.returncode != 0:
+            print(f"[{time.ctime()}] Download failed: {result.stderr}")
+            return
+        
+        print(f"[{time.ctime()}] Download completed successfully")
+        
+    except subprocess.TimeoutExpired:
+        print(f"[{time.ctime()}] Download timed out")
+        return
+    except Exception as e:
+        print(f"[{time.ctime()}] Download error: {e}")
+        return
 
     sent1, recv1 = get_io(INTERFACE)
     upload = sent1 - sent0
