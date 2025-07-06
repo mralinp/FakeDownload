@@ -114,6 +114,29 @@ while true; do
     fi
 done
 
+# Get download interval from user
+echo ""
+echo "Please enter the download interval in minutes."
+echo "Recommended: 30 minutes (minimum: 1 minute)"
+echo ""
+
+if [ -z "$DOWNLOAD_INTERVAL" ]; then
+    read -p "Enter download interval (minutes): " DOWNLOAD_INTERVAL
+else
+    echo "Using DOWNLOAD_INTERVAL from environment: $DOWNLOAD_INTERVAL"
+fi
+
+# Validate the interval
+while true; do
+    if [[ $DOWNLOAD_INTERVAL =~ ^[0-9]+$ ]] && [ $DOWNLOAD_INTERVAL -ge 1 ]; then
+        echo "Download interval set to $DOWNLOAD_INTERVAL minutes"
+        break
+    else
+        echo "Error: Please enter a valid number (minimum 1 minute)"
+        read -p "Enter download interval (minutes): " DOWNLOAD_INTERVAL
+    fi
+done
+
 # Create virtual environment
 echo "Creating Python virtual environment..."
 python3 -m venv venv
@@ -123,13 +146,14 @@ source venv/bin/activate
 echo "Installing Python packages..."
 pip install -r requirements.txt
 
-# Create config.ini file with user's URL
+# Create config.ini file with user's URL and interval
 echo "Creating configuration file..."
 cat > config.ini << EOF
 [DEFAULT]
 download_url = ${DOWNLOAD_URL}
 destination = downloaded_file
 chunk_size = 102400
+interval_minutes = ${DOWNLOAD_INTERVAL}
 EOF
 
 # Copy systemd service file
