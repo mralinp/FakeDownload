@@ -4,10 +4,16 @@ A Linux systemd service that downloads a file every 30 minutes to simulate netwo
 
 ## Quick Install
 
-**Single command installation:**
+**Method 1: Interactive installation (recommended):**
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownload/main/install.sh | sudo bash
+```
+
+**Method 2: Non-interactive installation with URL:**
+
+```bash
+DOWNLOAD_URL=http://your-server.com/file curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownload/main/install.sh | sudo bash
 ```
 
 ## Manual Setup

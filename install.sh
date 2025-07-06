@@ -73,22 +73,53 @@ fi
 
 # Get download URL from user and validate it
 echo ""
-while true; do
-    read -p "Enter the download URL: " DOWNLOAD_URL
-    
-    # Basic URL validation
-    if [[ $DOWNLOAD_URL =~ ^https?:// ]]; then
-        echo "Testing URL accessibility..."
-        if curl --output /dev/null --silent --head --fail "$DOWNLOAD_URL"; then
-            echo "URL is valid and accessible!"
-            break
+echo "Please enter the download URL when prompted."
+echo "The script will validate the URL before proceeding."
+echo ""
+
+# Check if running in interactive mode
+if [ -t 0 ]; then
+    # Interactive mode - use read
+    while true; do
+        read -p "Enter the download URL: " DOWNLOAD_URL
+        
+        # Basic URL validation
+        if [[ $DOWNLOAD_URL =~ ^https?:// ]]; then
+            echo "Testing URL accessibility..."
+            if curl --output /dev/null --silent --head --fail "$DOWNLOAD_URL"; then
+                echo "URL is valid and accessible!"
+                break
+            else
+                echo "Error: URL is not accessible. Please check the URL and try again."
+            fi
         else
-            echo "Error: URL is not accessible. Please check the URL and try again."
+            echo "Error: Invalid URL format. URL must start with http:// or https://"
         fi
+    done
+else
+    # Non-interactive mode - use environment variable or prompt
+    if [ -z "$DOWNLOAD_URL" ]; then
+        echo "Error: DOWNLOAD_URL environment variable not set."
+        echo "Please run the script interactively or set DOWNLOAD_URL environment variable."
+        echo "Example: DOWNLOAD_URL=http://example.com/file curl -sSL ... | sudo bash"
+        exit 1
     else
-        echo "Error: Invalid URL format. URL must start with http:// or https://"
+        echo "Using DOWNLOAD_URL from environment: $DOWNLOAD_URL"
+        # Validate the provided URL
+        if [[ $DOWNLOAD_URL =~ ^https?:// ]]; then
+            echo "Testing URL accessibility..."
+            if curl --output /dev/null --silent --head --fail "$DOWNLOAD_URL"; then
+                echo "URL is valid and accessible!"
+            else
+                echo "Error: URL is not accessible. Please check the URL and try again."
+                exit 1
+            fi
+        else
+            echo "Error: Invalid URL format. URL must start with http:// or https://"
+            exit 1
+        fi
     fi
-done
+fi
 
 # Create virtual environment
 echo "Creating Python virtual environment..."
