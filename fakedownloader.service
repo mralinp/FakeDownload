@@ -10,6 +10,10 @@ Environment=PATH=/opt/fakedownloader/venv/bin
 ExecStart=/opt/fakedownloader/venv/bin/python /opt/fakedownloader/main.py
 Restart=always
 RestartSec=10
+StandardOutput=journal
+StandardError=journal
+# Force Python to flush output immediately
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target 
