@@ -1,87 +1,87 @@
-# FakeDownloader
+# 🚀 FakeDownloader
 
-A Linux systemd service that downloads a file every 30 minutes to simulate network activity.
+**A lightweight Linux systemd service to simulate periodic network activity.**  
+Ideal for artificially increasing the bandwidth footprint of a server (e.g., to throttle or mask actual usage patterns).
 
-## Quick Install
+## 📦 Features
 
-**Method 1: Simple installation (recommended):**
+- Downloads a remote file at regular intervals (default: every 30 minutes)
+- Removes the file after each download to save space
+- Simulates network usage to affect perceived upload/download statistics
+- Automatically detects active network interface
+- Lightweight, persistent, and systemd-managed
+
+## ⚡ Quick Installation
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/mralinp/FakeDownload/main/install.sh)
 ```
 
-**Method 2: Non-interactive installation with URL:**
+## ⚙️ Configuration
 
-```bash
-DOWNLOAD_URL=http://your-server.com/file curl -sSL https://raw.githubusercontent.com/mralinp/FakeDownload/main/install.sh | sudo bash
+Edit the config.ini file to customize behavior:
+
+```ini
+[settings]
+download_url = https://example.com/largefile.zip   # URL to download
+destination = downloaded_file                      # Temporary filename
+chunk_size = 102400                                # Chunk size in bytes
+interval_minutes = 30                              # Download interval in mins, min=1
 ```
 
-## Manual Setup
+`download_url`: Remote file URL to simulate download.
 
-1. **Clone the repository:**
+`destination`: Temporary local file name. This file is deleted after the download finishes.
 
-   ```bash
-   git clone https://github.com/mralinp/FakeDownloader.git
-   cd FakeDownloader
-   ```
+`chunk_size`: Size of download chunks (in bytes) for more granular bandwidth control.
 
-2. **Run the setup script:**
-   ```bash
-   chmod +x install.sh
-   sudo ./install.sh
-   ```
+`interval_minutes` = Rest time between downloads in minutes, minimum rest time is **one** minute.
 
-## Configuration
+🧠 The service auto-detects the active network interface — no need for manual network configuration.
 
-The `config.ini` file contains the following settings:
+## 🧰 Service Management
 
-- `download_url`: The URL of the file to download
-- `destination`: Temporary filename for downloads (default: downloaded_file)
-- `chunk_size`: Download chunk size in bytes (default: 102400)
+Control the service using systemctl:
 
-**Note:** The network interface is automatically detected and doesn't need to be configured.
+| Action            | Command                                |
+| ----------------- | -------------------------------------- |
+| Start the service | `sudo systemctl start fakedownloader`  |
+| Stop the service  | `sudo systemctl stop fakedownloader`   |
+| Enable at boot    | `sudo systemctl enable fakedownloader` |
+| Check status      | `sudo systemctl status fakedownloader` |
+| View logs         | `sudo journalctl -u fakedownloader -f` |
 
-## Service Management
+## 🔍 How It Works
 
-**Start the service:**
+1. Every 30 minutes, the service:
+   - Downloads the specified file using chunked HTTP reads
+   - Logs the amount of data downloaded/uploaded
+   - Deletes the downloaded file to conserve disk space
+   - Sleeps for 30–45 minutes before repeating
+2. Runs as a persistent systemd service and automatically restarts if it crashes.
 
-```bash
-sudo systemctl start fakedownloader
-```
+## 📑 Logs
 
-**Stop the service:**
+Logs are available via journalctl and include:
 
-```bash
-sudo systemctl stop fakedownloader
-```
+- Timestamps for each download cycle
+- Download/upload byte counts
+- File deletion confirmations
+- Sleep intervals between runs
 
-**Check service status:**
+## ✅ Use Case
 
-```bash
-sudo systemctl status fakedownloader
-```
+This is useful when:
 
-**View service logs:**
+- You want to throttle actual server usage visibility (e.g., disguise download rate)
+- You’re trying to reach a minimum network usage quota
+- You need to simulate network traffic for load balancing, ISP behavior testing, or evasion scenarios
 
-```bash
-sudo journalctl -u fakedownloader -f
-```
+## 💡 Notes
 
-**Enable auto-start on boot:**
+- Make sure the download_url points to a large enough file to simulate meaningful traffic.
+- The download does not affect disk space long-term, as the file is removed immediately after completion.
 
-```bash
-sudo systemctl enable fakedownloader
-```
+## 📄 License
 
-## How it works
-
-The service downloads the specified file every 30 minutes, measures network I/O, and then removes the downloaded file. It runs continuously as a systemd service and will automatically restart if it crashes.
-
-## Logs
-
-The service logs include:
-
-- Download start/complete timestamps
-- Network upload/download statistics
-- File removal confirmations
-- Sleep duration notifications
+MIT © mralinp
